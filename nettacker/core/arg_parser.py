@@ -415,6 +415,14 @@ class ArgParser(ArgumentParser):
             dest="read_from_file",
             help=_("user_wordlist"),
         )
+        method_option.add_arguement(
+            "-a",
+            "--add-to-wordlist",
+            action="store",
+            default=Config.settings.wordlist_addition,
+            dest=wordlist_addition,
+            help=_("wordlist_addition"),
+        )
 
         # API Options
         api_options = self.add_argument_group(_("API"), _("API_options"))
@@ -682,6 +690,23 @@ class ArgParser(ArgumentParser):
                 open(options.read_from_file).read().split("\n")
             except Exception:
                 die_failure(_("error_wordlist").format(options.read_from_file))
+        # Check for wordlist use
+        if options.wordlist_addition:
+            for module in options.selected_modules:
+                module_name_parts = module.split("_")
+                action = module_name_parts[-1]
+                library = "_".join(module_name_parts[:-1])
+                yaml_path = Config.path.modules_dir / action / f"{library}.yaml"
+        
+                try:
+                    with open(yaml_path, "r") as file:
+                        if "wordlists/" not in file.read():
+                            die_failure(_("wordlist_not_used"))
+                except FileNotFoundError:
+                    die_failure(_("scan_module_not_found").format(module))
+                
+                #if "read_from_file" not in open(Config.path.modules_dir / action / f"{library}.yaml"):
+                #   die_failure(_("wordlist_not_used").format(options.wordlist_extension))
         # Check output file
         try:
             temp_file = open(options.report_path_filename, "w")

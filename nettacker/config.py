@@ -145,6 +145,7 @@ class DefaultSettings(ConfigBase):
     )
     usernames = None
     usernames_list = None
+    wordlist_addition = None
     verbose_event = False
     verbose_mode = False
     scan_compare_id = None
